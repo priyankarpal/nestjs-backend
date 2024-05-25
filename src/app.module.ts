@@ -3,10 +3,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import * as dotenv from 'dotenv';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { Movie } from './movies/entities/movie.entity';
+import { MoviesModule } from './movies/movies.module';
 import { User } from './users/user.entity';
 import { UsersModule } from './users/users.module';
-import { AdminModule } from './admin/admin.module';
-import { MoviesModule } from './movies/movies.module';
 
 dotenv.config();
 
@@ -19,12 +19,11 @@ dotenv.config();
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [User],
+      entities: [User, Movie],
       synchronize: true,
       logging: true,
     }),
     UsersModule,
-    AdminModule,
     MoviesModule,
   ],
   controllers: [AppController],
