@@ -1,9 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
-import { User } from '../users/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './user.entity';
 
 @Injectable()
 export class UsersService {
@@ -12,10 +13,15 @@ export class UsersService {
         private usersRepository: Repository<User>,
     ) { }
 
-    async create(createUserDto: CreateUserDto): Promise<User> {
+    async createUser(createUserDto: CreateUserDto): Promise<User> {
         const user = this.usersRepository.create(createUserDto);
         return this.usersRepository.save(user);
     }
+
+    async findByEmail(email: string): Promise<User | undefined> {
+        return this.usersRepository.findOne({ where: { email } });
+    }
+
     async findAll(): Promise<User[]> {
         const users = await this.usersRepository.find();
         if (!users.length) {
@@ -33,14 +39,16 @@ export class UsersService {
     }
 
     async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-        const user = await this.usersRepository.update(id, updateUserDto);
+        await this.usersRepository.update(id, updateUserDto);
         return this.usersRepository.findOne({ where: { id } });
-
     }
 
-    async remove(id: string): Promise<{ data: string; }> {
+    async remove(id: string): Promise<void> {
         const user = await this.usersRepository.findOne({ where: { id } });
         await this.usersRepository.remove(user);
-        return { data: 'User deleted' };
+    }
+
+    async comparePassword(enteredPassword: string, userPassword: string): Promise<boolean> {
+        return bcrypt.compare(enteredPassword, userPassword);
     }
 }

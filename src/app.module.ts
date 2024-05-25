@@ -25,6 +25,7 @@ dotenv.config();
     }),
     UsersModule,
     MoviesModule,
+
   ],
   controllers: [AppController],
   providers: [AppService],

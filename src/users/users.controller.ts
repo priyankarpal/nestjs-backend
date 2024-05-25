@@ -20,8 +20,9 @@ export class UserController {
 
     @Post()
     create(@Body() createUserDto: CreateUserDto): Promise<User> {
-        return this.userService.create(createUserDto);
+        return this.userService.createUser(createUserDto);
     }
+
 
     @Put(':id')
     update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto): Promise<User> {
@@ -32,4 +33,7 @@ export class UserController {
     async remove(@Param('id') id: string): Promise<void> {
         await this.userService.remove(id);
     }
+
+
+
 }
