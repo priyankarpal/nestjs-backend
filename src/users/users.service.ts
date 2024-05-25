@@ -15,7 +15,11 @@ export class UsersService {
 
     async createUser(createUserDto: CreateUserDto): Promise<User> {
         const user = this.usersRepository.create(createUserDto);
-        return this.usersRepository.save(user);
+        try {
+            return await this.usersRepository.save(user);
+        } catch (error) {
+            throw new Error(`Failed to create user: ${error.message}`);
+        }
     }
 
     async findByEmail(email: string): Promise<User | undefined> {

@@ -1,8 +1,7 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
-import { User } from 'src/users/user.entity';
+import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UsersService } from '../users/users.service';
 
 @Injectable()
@@ -14,24 +13,27 @@ export class AuthService {
 
     async validateUser(email: string, password: string): Promise<any> {
         const user = await this.usersService.findByEmail(email);
-        if (user && await bcrypt.compare(password, user.password)) {
-            return user;
+        if (user) {
+            const isPasswordValid = await bcrypt.compare(password, user.password);
+            if (isPasswordValid) {
+                return user;
+            }
         }
-        throw new UnauthorizedException('Invalid email or password');
+        return null;
     }
 
-    async login(user: User): Promise<{ accessToken: string; }> {
+    async login(user: any): Promise<{ accessToken: string; }> {
         const payload = { email: user.email, sub: user.id };
         return {
             accessToken: this.jwtService.sign(payload),
         };
     }
-    async signUp(createUserDto: CreateUserDto): Promise<User> {
+
+    async signUp(createUserDto: CreateUserDto): Promise<any> {
         const existingUser = await this.usersService.findByEmail(createUserDto.email);
         if (existingUser) {
-            throw new Error('Email is already in use');
+            throw new ConflictException('Email is already in use');
         }
-
         const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
         const user = await this.usersService.createUser({
             ...createUserDto,
@@ -39,7 +41,4 @@ export class AuthService {
         });
         return user;
     }
-
-
-
 }

@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import * as dotenv from 'dotenv';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
 import { Movie } from './movies/entities/movie.entity';
 import { MoviesModule } from './movies/movies.module';
 import { User } from './users/user.entity';
@@ -25,7 +26,7 @@ dotenv.config();
     }),
     UsersModule,
     MoviesModule,
-
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],
