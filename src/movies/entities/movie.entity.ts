@@ -17,6 +17,4 @@ export class Movie {
     @Column()
     genre: string;
 
-
-
 }
