@@ -15,7 +15,7 @@ export class UserController {
 
     @Get(':id')
     findOne(@Param('id') id: string): Promise<User> {
-        return this.userService.findOne(+id);
+        return this.userService.findOne(id);
     }
 
     @Post()
@@ -25,11 +25,11 @@ export class UserController {
 
     @Put(':id')
     update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto): Promise<User> {
-        return this.userService.update(+id, updateUserDto);
+        return this.userService.update(id, updateUserDto);
     }
 
     @Delete(':id')
     async remove(@Param('id') id: string): Promise<void> {
-        await this.userService.remove(+id);
+        await this.userService.remove(id);
     }
 }
