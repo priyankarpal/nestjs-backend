@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { Movie } from './entities/movie.entity';
 
@@ -20,16 +20,20 @@ export class MoviesService {
     return await this.movieRepository.find();
   }
 
-  async find(genre: string): Promise<Movie[]> {
-    return await this.movieRepository.find();
+  async find(genre: string): Promise<{ genre: string; }[]> {
+    const movies = await this.movieRepository.find({
+      where: { genre: ILike(`%${genre}%`) },
+    }); // now it won't create issues if I use small case or not :)
+    return movies.map((movie) => movie);
   }
 
-  async remove(id: string): Promise<Movie> {
-    const movie = await this.movieRepository.findOne({ where: { id } });
-    if (!movie) {
-      throw new Error('Movie not found');
-    }
-    await this.movieRepository.delete(id);
-    return movie;
+  async findAllGenres(): Promise<string[]> {
+    const movies = await this.movieRepository.find();
+
+    const genres = movies.map((movie) => movie.genre);
+
+    const uniqueGenres = [...new Set(genres)];
+
+    return uniqueGenres;
   }
 }
