@@ -1,5 +1,4 @@
-import * as bcrypt from 'bcrypt';
-import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 export enum UserRole {
     ADMIN = 'admin',
@@ -27,11 +26,11 @@ export class User {
     })
     role: UserRole;
 
-    @BeforeInsert()
-    @BeforeUpdate()
-    async hashPassword() {
-        if (this.password) {
-            this.password = await bcrypt.hash(this.password, 10);
-        }
-    }
+    // @BeforeInsert()
+    // @BeforeUpdate()
+    // async hashPassword() {
+    //     if (this.password) {
+    //         this.password = await bcrypt.hash(this.password, 10);
+    //     }
+    // }
 }
